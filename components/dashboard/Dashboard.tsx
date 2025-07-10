@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DashboardProps } from "@/types/dashboard";
+import { Car, AuditLog, DashboardProps } from "@/types/dashboard";
 import { withAuth } from "@/components/withAuth";
 import { useFeedback } from "@/contexts/FeedbackContext";
 import { useDashboardQuery } from "@/hooks/useDashboardQuery";
@@ -18,9 +18,11 @@ function Dashboard({
 }: DashboardProps) {
   const { data: session } = useSession();
   const { addMessage } = useFeedback();
-  const { query, router } = useDashboardQuery();
+  const { query } = useDashboardQuery();
   const carForm = useCarForm();
   const [activeTab, setActiveTab] = useState("listings");
+  const [cars, setCars] = useState<Car[]>(initialCars);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(initialAuditLogs);
 
   const handleApprove = useCallback(
     async (carId: number) => {
@@ -31,12 +33,16 @@ function Dashboard({
         });
 
         if (response.ok) {
+          setCars((prevCars) =>
+            prevCars.map((car) =>
+              car.id === carId ? { ...car, status: "approved" as const } : car
+            )
+          );
           addMessage({
             type: "success",
             title: "Car Approved",
             description: "The car listing has been successfully approved.",
           });
-          router.reload();
         } else {
           addMessage({
             type: "error",
@@ -54,7 +60,7 @@ function Dashboard({
         carForm.setIsLoading(false);
       }
     },
-    [addMessage, carForm, router]
+    [addMessage, carForm]
   );
 
   const handleReject = useCallback(
@@ -66,12 +72,16 @@ function Dashboard({
         });
 
         if (response.ok) {
+          setCars((prevCars) =>
+            prevCars.map((car) =>
+              car.id === carId ? { ...car, status: "rejected" as const } : car
+            )
+          );
           addMessage({
             type: "success",
             title: "Car Rejected",
             description: "The car listing has been rejected.",
           });
-          router.reload();
         } else {
           addMessage({
             type: "error",
@@ -89,7 +99,7 @@ function Dashboard({
         carForm.setIsLoading(false);
       }
     },
-    [addMessage, carForm, router]
+    [addMessage, carForm]
   );
 
   const handleSaveEdit = useCallback(async () => {
@@ -114,13 +124,26 @@ function Dashboard({
       });
 
       if (response.ok) {
+        setCars((prevCars) =>
+          prevCars.map((car) =>
+            car.id === carForm.editingCar?.id
+              ? {
+                  ...car,
+                  ...updatedData,
+                  status: updatedData.status as
+                    | "pending"
+                    | "approved"
+                    | "rejected",
+                }
+              : car
+          )
+        );
         addMessage({
           type: "success",
           title: "Car Updated",
           description: "The car listing has been successfully updated.",
         });
         carForm.closeEditDialog();
-        router.reload();
       } else {
         addMessage({
           type: "error",
@@ -137,7 +160,7 @@ function Dashboard({
     } finally {
       carForm.setIsLoading(false);
     }
-  }, [addMessage, carForm, router]);
+  }, [addMessage, carForm]);
 
   return (
     <div className="container mx-auto py-8 px-4 space-y-6">
@@ -164,7 +187,7 @@ function Dashboard({
 
         <TabsContent value="listings">
           <CarListings
-            initialCars={initialCars}
+            initialCars={cars}
             carsTotal={carsTotal}
             query={query}
             carForm={carForm}
@@ -176,7 +199,7 @@ function Dashboard({
 
         <TabsContent value="audit">
           <AuditTrail
-            initialAuditLogs={initialAuditLogs}
+            initialAuditLogs={auditLogs}
             auditTotal={auditTotal}
             query={query}
           />

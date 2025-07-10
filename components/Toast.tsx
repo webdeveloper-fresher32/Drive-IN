@@ -9,7 +9,7 @@ export function ToastContainer() {
   if (messages.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2">
+    <div className="fixed top-4 right-4 z-[9999] space-y-2 pointer-events-none">
       {messages.map((message) => (
         <Toast
           key={message.id}
@@ -63,6 +63,7 @@ function Toast({ message, onClose }: ToastProps) {
       bg-white dark:bg-gray-800 border-l-4 ${getBorderColor()} 
       rounded-lg shadow-lg p-4 min-w-[300px] max-w-[400px]
       animate-in slide-in-from-right duration-300
+      pointer-events-auto
     `}
     >
       <div className="flex items-start gap-3">

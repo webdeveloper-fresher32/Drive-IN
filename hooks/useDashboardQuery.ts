@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useCallback } from 'react';
 import { QueryParams } from '@/types/dashboard';
 
 export const useDashboardQuery = () => {
@@ -13,7 +14,7 @@ export const useDashboardQuery = () => {
     auditLimit: Array.isArray(router.query.auditLimit) ? router.query.auditLimit[0] : router.query.auditLimit,
   };
   
-  const updateQuery = (newParams: Partial<QueryParams>) => {
+  const updateQuery = useCallback((newParams: Partial<QueryParams>) => {
     const currentQuery = { ...router.query };
     
     Object.entries(newParams).forEach(([key, value]) => {
@@ -27,17 +28,16 @@ export const useDashboardQuery = () => {
     router.push({
       pathname: router.pathname,
       query: currentQuery,
-    });
-  };
+    }, undefined, { shallow: true, scroll: false });
+  }, [router]);
 
-  const resetPage = (params: Partial<QueryParams>) => {
+  const resetPage = useCallback((params: Partial<QueryParams>) => {
     updateQuery({ ...params, page: '1' });
-  };
+  }, [updateQuery]);
 
   return {
     query,
     updateQuery,
     resetPage,
-    router,
   };
 };

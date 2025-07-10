@@ -2,6 +2,7 @@ import { GetServerSideProps } from "next";
 import { FeedbackProvider } from "@/contexts/FeedbackContext";
 import Dashboard from "@/components/dashboard/Dashboard";
 import { ToastContainer } from "@/components/Toast";
+import PageHead from "@/components/PageHead";
 import { Car, AuditLog } from "@/types/dashboard";
 
 interface DashboardPageProps {
@@ -18,15 +19,23 @@ export default function DashboardPage({
   auditTotal,
 }: DashboardPageProps) {
   return (
-    <FeedbackProvider>
-      <Dashboard
-        initialCars={initialCars}
-        initialAuditLogs={initialAuditLogs}
-        carsTotal={carsTotal}
-        auditTotal={auditTotal}
+    <>
+      <PageHead
+        title="Dashboard"
+        description={`Car rental dashboard with ${carsTotal} vehicles and comprehensive fleet management tools`}
+        keywords="car rental dashboard, fleet management, vehicle inventory, rental analytics"
+        canonicalUrl="/dashboard"
       />
-      <ToastContainer />
-    </FeedbackProvider>
+      <FeedbackProvider>
+        <Dashboard
+          initialCars={initialCars}
+          initialAuditLogs={initialAuditLogs}
+          carsTotal={carsTotal}
+          auditTotal={auditTotal}
+        />
+        <ToastContainer />
+      </FeedbackProvider>
+    </>
   );
 }
 
