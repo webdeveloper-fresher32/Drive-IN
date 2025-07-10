@@ -1,3 +1,4 @@
+import React, { memo, useMemo, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -25,7 +26,7 @@ interface CarListingsProps {
   onSaveEdit: () => void;
 }
 
-export function CarListings({
+export const CarListings = memo(function CarListings({
   initialCars,
   carsTotal,
   query,
@@ -40,24 +41,44 @@ export function CarListings({
   const page = parseInt(query.page as string) || 1;
   const limit = parseInt(query.limit as string) || 5;
 
-  const filteredData =
-    status === "all"
+  const filteredData = useMemo(() => {
+    return status === "all"
       ? initialCars
       : initialCars.filter((car) => car.status === status);
+  }, [initialCars, status]);
 
-  const totalItems = filteredData.length;
-  const totalPages = Math.ceil(totalItems / limit);
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
-  const currentItems = filteredData.slice(startIndex, endIndex);
+  const paginationData = useMemo(() => {
+    const totalItems = filteredData.length;
+    const totalPages = Math.ceil(totalItems / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const currentItems = filteredData.slice(startIndex, endIndex);
 
-  const handleStatusFilterChange = (value: string) => {
-    resetPage({ status: value });
-  };
+    return {
+      totalItems,
+      totalPages,
+      startIndex,
+      endIndex,
+      currentItems,
+    };
+  }, [filteredData, page, limit]);
 
-  const handleItemsPerPageChange = (value: string) => {
-    resetPage({ limit: value });
-  };
+  const handleStatusFilterChange = useCallback(
+    (value: string) => {
+      resetPage({ status: value });
+    },
+    [resetPage]
+  );
+
+  const handleItemsPerPageChange = useCallback(
+    (value: string) => {
+      resetPage({ limit: value });
+    },
+    [resetPage]
+  );
+
+  const { totalItems, totalPages, startIndex, endIndex, currentItems } =
+    paginationData;
 
   return (
     <div className="space-y-6">
@@ -137,4 +158,4 @@ export function CarListings({
       />
     </div>
   );
-}
+});

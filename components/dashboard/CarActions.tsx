@@ -1,3 +1,4 @@
+import React, { memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Car } from "@/types/dashboard";
 
@@ -9,19 +10,31 @@ interface CarActionsProps {
   isLoading: boolean;
 }
 
-export function CarActions({
+export const CarActions = memo(function CarActions({
   car,
   onApprove,
   onReject,
   onEdit,
   isLoading,
 }: CarActionsProps) {
+  const handleApprove = useCallback(() => {
+    onApprove(car.id);
+  }, [car.id, onApprove]);
+
+  const handleReject = useCallback(() => {
+    onReject(car.id);
+  }, [car.id, onReject]);
+
+  const handleEdit = useCallback(() => {
+    onEdit(car);
+  }, [car, onEdit]);
+
   return (
     <div className="flex items-center gap-1 justify-end text-sm">
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => onApprove(car.id)}
+        onClick={handleApprove}
         className="h-auto p-1 text-green-600 hover:text-green-700 hover:bg-transparent"
         disabled={car.status === "approved" || isLoading}
       >
@@ -31,7 +44,7 @@ export function CarActions({
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => onReject(car.id)}
+        onClick={handleReject}
         className="h-auto p-1 text-red-600 hover:text-red-700 hover:bg-transparent"
         disabled={car.status === "rejected" || isLoading}
       >
@@ -41,7 +54,7 @@ export function CarActions({
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => onEdit(car)}
+        onClick={handleEdit}
         className="h-auto p-1 text-blue-600 hover:text-blue-700 hover:bg-transparent"
         disabled={isLoading}
       >
@@ -49,4 +62,4 @@ export function CarActions({
       </Button>
     </div>
   );
-}
+});

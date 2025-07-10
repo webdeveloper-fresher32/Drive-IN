@@ -4,21 +4,15 @@ This is a comprehensive **Next.js 14** project using **TypeScript**, **shadcn/ui
 
 ## ✨ Features
 
-- ⚡️ Fully setup with **Next.js App Router** + **TypeScript**
-- 🎨 Integrated with **shadcn/ui** component library
-- 🎭 Supports **5 dynamic themes** using **hex color codes**:
-  - `light` - Clean, bright interface (#ffffff, #0a0a0a)
-  - `dark` - Modern dark mode (#0a0a0a, #fafafa)
-  - `emerald` - Nature-inspired green theme (#10b981, #064e3b)
-  - `rose` - Elegant pink theme (#e11d48, #881337)
-  - `sky` - Fresh blue theme (#0284c7, #0c4a6e)
-- 🧩 Complete component showcase with **40+ shadcn/ui components**
-- 🌗 Live **theme switching** with persistent selection
-- 🎯 **Lucide React Icons** for modern UI icons
+- 🎨 **5 Beautiful Themes** with runtime switching using hex colors
+- 🧩 **50+ shadcn/ui Components** - Complete component library showcase
+- 🔥 **Next.js 14** with App Router and TypeScript
 - 📱 **Fully responsive** design for all devices
 - ♿ **Accessible** components following WCAG guidelines
 - 📁 Clean, scalable, and industry-standard folder structure
 - 🎨 **Hex-only color system** - no HSL values for easier customization
+- ⚡ **Performance optimized** with React.memo and selective re-rendering
+- 🚀 **Production ready** with Vercel deployment support
 
 ## 🛠 Tech Stack
 
@@ -34,6 +28,8 @@ This is a comprehensive **Next.js 14** project using **TypeScript**, **shadcn/ui
 ---
 
 ## 🚀 Getting Started
+
+### Local Development
 
 Clone the repository and install dependencies:
 
@@ -51,14 +47,80 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-Build for production:
+### Build for Production
 
 ```bash
-npm run build
+npm run build:production
 npm start
 ```
 
----
+### Performance Analysis
+
+```bash
+npm run analyze
+```
+
+## 🚀 Deployment
+
+### Deploy to Vercel (Recommended)
+
+1. **One-click deployment:**
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/nextjs-shadcn-theme-demo)
+
+2. **Manual deployment:**
+
+```bash
+npm i -g vercel
+vercel
+vercel --prod
+```
+
+3. **Environment Variables on Vercel:**
+
+Set these in your Vercel dashboard:
+
+```env
+NEXTAUTH_SECRET=your-production-secret-here
+NEXTAUTH_URL=https://your-app-name.vercel.app
+```
+
+### Deploy to Other Platforms
+
+```bash
+npm run build
+```
+
+The application uses:
+
+- **SQLite in-memory database** (no external DB required)
+- **File-based data storage** for demo purposes
+- **Static optimization** where possible
+
+## ⚡ Performance Optimizations
+
+This project includes several performance optimizations:
+
+### Component-Level Optimizations
+
+- **React.memo()** for preventing unnecessary re-renders
+- **useCallback()** for stable function references
+- **useMemo()** for expensive calculations
+- **Selective rendering** - only changed table rows re-render
+
+### Bundle Optimizations
+
+- **Code splitting** with dynamic imports
+- **Tree shaking** for unused code elimination
+- **Optimized package imports** for common libraries
+- **Webpack bundle analysis** available via `npm run analyze`
+
+### Runtime Optimizations
+
+- **Efficient state management** with minimal re-renders
+- **Debounced search** and filtering
+- **Pagination** for large data sets
+- **Lazy loading** for non-critical components
 
 ## 🎨 Available Themes (Hex Colors)
 
@@ -285,30 +347,6 @@ To customize the theme colors, edit the CSS custom properties in `/styles/global
 ```
 
 All colors use hex values for easy modification and understanding.
-
----
-
-## 📦 Deployment
-
-Deploy to **Vercel** with one click:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/your-username/nextjs-shadcn-theme-demo)
-
-Or deploy to other platforms:
-
-```bash
-npm run build  # Generates static files in /out folder
-```
-
----
-
-## 🙌 Credits
-
-- **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Design System**: [Radix UI](https://www.radix-ui.com/)
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 
 ---
 

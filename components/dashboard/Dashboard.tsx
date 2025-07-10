@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DashboardProps } from "@/types/dashboard";
@@ -22,71 +22,77 @@ function Dashboard({
   const carForm = useCarForm();
   const [activeTab, setActiveTab] = useState("listings");
 
-  const handleApprove = async (carId: number) => {
-    carForm.setIsLoading(true);
-    try {
-      const response = await fetch(`/api/cars/${carId}/approve`, {
-        method: "POST",
-      });
-
-      if (response.ok) {
-        addMessage({
-          type: "success",
-          title: "Car Approved",
-          description: "The car listing has been successfully approved.",
+  const handleApprove = useCallback(
+    async (carId: number) => {
+      carForm.setIsLoading(true);
+      try {
+        const response = await fetch(`/api/cars/${carId}/approve`, {
+          method: "POST",
         });
-        router.reload();
-      } else {
-        addMessage({
-          type: "error",
-          title: "Approval Failed",
-          description: "Failed to approve the car listing. Please try again.",
-        });
-      }
-    } catch (error) {
-      addMessage({
-        type: "error",
-        title: "Error",
-        description: "An unexpected error occurred while approving the car.",
-      });
-    } finally {
-      carForm.setIsLoading(false);
-    }
-  };
 
-  const handleReject = async (carId: number) => {
-    carForm.setIsLoading(true);
-    try {
-      const response = await fetch(`/api/cars/${carId}/reject`, {
-        method: "POST",
-      });
-
-      if (response.ok) {
-        addMessage({
-          type: "success",
-          title: "Car Rejected",
-          description: "The car listing has been rejected.",
-        });
-        router.reload();
-      } else {
+        if (response.ok) {
+          addMessage({
+            type: "success",
+            title: "Car Approved",
+            description: "The car listing has been successfully approved.",
+          });
+          router.reload();
+        } else {
+          addMessage({
+            type: "error",
+            title: "Approval Failed",
+            description: "Failed to approve the car listing. Please try again.",
+          });
+        }
+      } catch (error) {
         addMessage({
           type: "error",
-          title: "Rejection Failed",
-          description: "Failed to reject the car listing. Please try again.",
+          title: "Error",
+          description: "An unexpected error occurred while approving the car.",
         });
+      } finally {
+        carForm.setIsLoading(false);
       }
-    } catch (error) {
-      addMessage({
-        type: "error",
-        title: "Error",
-        description: "An unexpected error occurred while rejecting the car.",
-      });
-    } finally {
-      carForm.setIsLoading(false);
-    }
-  };
+    },
+    [addMessage, carForm, router]
+  );
 
-  const handleSaveEdit = async () => {
+  const handleReject = useCallback(
+    async (carId: number) => {
+      carForm.setIsLoading(true);
+      try {
+        const response = await fetch(`/api/cars/${carId}/reject`, {
+          method: "POST",
+        });
+
+        if (response.ok) {
+          addMessage({
+            type: "success",
+            title: "Car Rejected",
+            description: "The car listing has been rejected.",
+          });
+          router.reload();
+        } else {
+          addMessage({
+            type: "error",
+            title: "Rejection Failed",
+            description: "Failed to reject the car listing. Please try again.",
+          });
+        }
+      } catch (error) {
+        addMessage({
+          type: "error",
+          title: "Error",
+          description: "An unexpected error occurred while rejecting the car.",
+        });
+      } finally {
+        carForm.setIsLoading(false);
+      }
+    },
+    [addMessage, carForm, router]
+  );
+
+  const handleSaveEdit = useCallback(async () => {
     if (!carForm.editingCar) return;
 
     carForm.setIsLoading(true);
@@ -131,7 +137,7 @@ function Dashboard({
     } finally {
       carForm.setIsLoading(false);
     }
-  };
+  }, [addMessage, carForm, router]);
 
   return (
     <div className="container mx-auto py-8 px-4 space-y-6">

@@ -1,3 +1,4 @@
+import React, { memo } from "react";
 import {
   Table,
   TableBody,
@@ -23,7 +24,59 @@ interface CarTableProps {
   onEdit: (car: Car) => void;
 }
 
-export function CarTable({
+const CarRow = memo(
+  ({
+    car,
+    isLoading,
+    onApprove,
+    onReject,
+    onEdit,
+  }: {
+    car: Car;
+    isLoading: boolean;
+    onApprove: (carId: number) => void;
+    onReject: (carId: number) => void;
+    onEdit: (car: Car) => void;
+  }) => {
+    return (
+      <TableRow key={car.id} className="hover:bg-muted/50">
+        <TableCell className="font-medium">#{car.id}</TableCell>
+        <TableCell className="font-semibold">{car.carModel}</TableCell>
+        <TableCell>{car.carYear}</TableCell>
+        <TableCell>{car.location}</TableCell>
+        <TableCell className="font-mono">
+          <span className="text-green-600 font-semibold">
+            ${car.rentalPricePerDay}
+          </span>
+        </TableCell>
+        <TableCell>
+          <Badge variant={getStatusVariant(car.status)} className="capitalize">
+            {car.status}
+          </Badge>
+        </TableCell>
+        <TableCell className="text-sm text-gray-600 dark:text-gray-400">
+          {car.submittedBy}
+        </TableCell>
+        <TableCell className="text-right text-sm text-gray-600 dark:text-gray-400">
+          {formatDate(car.submittedAt)}
+        </TableCell>
+        <TableCell className="text-right">
+          <CarActions
+            car={car}
+            onApprove={onApprove}
+            onReject={onReject}
+            onEdit={onEdit}
+            isLoading={isLoading}
+          />
+        </TableCell>
+      </TableRow>
+    );
+  }
+);
+
+CarRow.displayName = "CarRow";
+
+export const CarTable = memo(function CarTable({
   cars,
   startIndex,
   endIndex,
@@ -54,42 +107,16 @@ export function CarTable({
       </TableHeader>
       <TableBody>
         {cars.map((car) => (
-          <TableRow key={car.id} className="hover:bg-muted/50">
-            <TableCell className="font-medium">#{car.id}</TableCell>
-            <TableCell className="font-semibold">{car.carModel}</TableCell>
-            <TableCell>{car.carYear}</TableCell>
-            <TableCell>{car.location}</TableCell>
-            <TableCell className="font-mono">
-              <span className="text-green-600 font-semibold">
-                ${car.rentalPricePerDay}
-              </span>
-            </TableCell>
-            <TableCell>
-              <Badge
-                variant={getStatusVariant(car.status)}
-                className="capitalize"
-              >
-                {car.status}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-sm text-gray-600 dark:text-gray-400">
-              {car.submittedBy}
-            </TableCell>
-            <TableCell className="text-right text-sm text-gray-600 dark:text-gray-400">
-              {formatDate(car.submittedAt)}
-            </TableCell>
-            <TableCell className="text-right">
-              <CarActions
-                car={car}
-                onApprove={onApprove}
-                onReject={onReject}
-                onEdit={onEdit}
-                isLoading={isLoading}
-              />
-            </TableCell>
-          </TableRow>
+          <CarRow
+            key={car.id}
+            car={car}
+            isLoading={isLoading}
+            onApprove={onApprove}
+            onReject={onReject}
+            onEdit={onEdit}
+          />
         ))}
       </TableBody>
     </Table>
   );
-}
+});
